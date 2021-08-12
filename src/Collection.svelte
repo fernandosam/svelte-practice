@@ -1,8 +1,7 @@
 <script>
   import { event, books } from "./stores.js";
 
-  const component = "Collection";
-
+  // Local Actions
   function generateId(array) {
     return array.length ? Math.max(...array.map((t) => t.id)) + 1 : 1;
   }
@@ -24,7 +23,7 @@
     return list;
   }
 
-  // Actions
+  // Global Actions
   const actions = {
     // Book
     createBook: (event) => {
@@ -39,5 +38,5 @@
     },
   };
 
-  event.listener(component, actions);
+  event.listener("Collection", actions);
 </script>

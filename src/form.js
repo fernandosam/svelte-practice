@@ -65,14 +65,18 @@ const module = () => {
     }
 
     return {
-        action: (fieldset) => {
-            const action = fieldset.getElementsByTagName("input")["action"].value;
-            return action;
-        },
-        focusFirst: (fieldset) => {
-            const inputs = fieldset.getElementsByTagName("input");
+        focusFirstElement: (formId) => {
+            var elements = document.getElementById(formId).elements;
 
-            inputs[0].focus();
+            for (let i = 0; i < elements.length; i++) {
+                const element = elements[i];
+
+                if (element.tagName == "INPUT"){
+                    element.focus();
+                    break;
+                }
+            }
+            
             window.scrollTo(0, 0);
         },
         validate: (event) => {

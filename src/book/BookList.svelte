@@ -1,14 +1,14 @@
 <script>
-  import Card from "./Card.svelte";
-  import { books, purchases, event } from "./stores.js";
+  import Card from "../common/Card.svelte";
+  import { books, event } from "../stores.js";
 
-  // Events
-  function onEdit(object) {
-    event.dispatch("fillForm", "BookFields", object);
+  // Local Actions
+  function onEdit(book) {
+    event.dispatch("BookForm/Form", "fillForm", book);
   }
 
-  function onDelete(object) {
-    event.dispatch("deleteBook", "Collection", object);
+  function onDelete(book) {
+    event.dispatch("Collection", "deleteBook", book);
   }
 </script>
 

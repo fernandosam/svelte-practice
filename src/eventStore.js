@@ -38,8 +38,9 @@ export const eventStore = () => {
     const { subscribe, set } = writable({});
 
     return {
-        dispatch: (name, target, object = null) => {
-            let event = createEvent(name, target, object);
+        dispatch: (component, action, object = null) => {
+            let event = createEvent(action, component, object);
+            //console.log(event);
             return set(event);
         },
         listener: (component, actions) => {

@@ -6,4 +6,4 @@ const books = localStore("books", []);
 const event = eventStore();
 const purchases = writable([]);
 
-export { books, purchases, event };
+export { books, event, purchases };
