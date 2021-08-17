@@ -1,57 +1,64 @@
-<script>
+<script lang="ts">
   import { onMount } from "svelte";
-  import Card from "./Card.svelte";
-  import { form } from "../form.js";
+  import { form as formJS } from "../form.js";
   import { event } from "../stores.js";
 
-  export let id;
-  let action = "create";
-  
+  export let id: string;
+  let action = "createData";
+
   // Local Actions
-  function onSubmit(e) {
-    if (form.validate(e)) {
-      event.dispatch(id, action);
-      form.focusFirstElement(id);
-    } else {
-      // Alert
-      // Show Alert
+  function onSubmit(e: any) {
+    if (formJS.validate(id)) {
+      actions[action]();
+      formJS.focusFirstElement(id);
     }
     e.preventDefault();
   }
 
   // Global Actions
   const actions = {
-    changeAction: (e) => {
-      action = e.object;
+    fillForm: (e: any) => {
+      event.dispatch(id, "fillForm", e.object);
+      formJS.cleanErrors(id);
+      action = "updateData";
     },
-    fillForm: (e) => {
-      const object = e.object;
-      event.dispatch(id, "fillForm", object);
-      action = "update";
+    createData: () => {
+      event.dispatch(id, "createData");
+    },
+    updateData: () => {
+      event.dispatch(id, "updateData");
+      action = "createData";
     },
   };
 
-  event.listener(id+"/Form", actions);
+  event.listener(id + "/Form", actions);
 
   onMount(() => {
-    form.focusFirstElement(id);
+    var modalEl = document.getElementById(id + "-modal");
+
+    // Close Modal
+    modalEl.addEventListener("hidden.bs.modal", function (e) {
+      formJS.cleanErrors(id);
+      event.dispatch(id, "newData");
+    });
+
+    formJS.focusFirstElement(id);
   });
 </script>
 
 <!-- Form -->
-<Card>
-  <form {id} method="post" on:submit={onSubmit}>
-    <fieldset class="form-fieldset">
-      <slot/>
-      <div class="mt-2">
-        {#if action == "update"}
-          <button type="submit" class="btn btn-primary">Alterar</button>
-          <input type="hidden" name="action" value="update" />
-        {:else}
-          <button type="submit" class="btn btn-primary">Incluir</button>
-          <input type="hidden" name="action" value="create" />
-        {/if}
-      </div>
-    </fieldset>
-  </form>
-</Card>
+<form {id} method="post" on:submit={onSubmit}>
+  <slot />
+  <div class="modal-footer">
+    <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+      Cancel
+    </a>
+    {#if action == "updateData"}
+      <input type="submit" class="btn btn-primary ms-auto" value="Alterar" />
+      <input type="hidden" name="action" value="updateData" />
+    {:else}
+      <input type="submit" class="btn btn-primary ms-auto" value="Incluir" />
+      <input type="hidden" name="action" value="createData" />
+    {/if}
+  </div>
+</form>

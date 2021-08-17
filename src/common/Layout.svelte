@@ -3,7 +3,7 @@
   import Footer from "./Footer.svelte";
 </script>
 
-<Header/>
+<Header />
 <div class="container-xl">
   <slot />
 </div>
