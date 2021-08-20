@@ -1,8 +1,9 @@
 <script>
   import { books, event } from "../stores.js";
   import { data } from "../data/test.js";
-  import { onMount } from "svelte";
-  import jquery from "jquery";
+  import { Datatable, rows } from "svelte-simple-datatables";
+
+  const settings = { columnFilter: true };
 
   // Local Actions
   function onEdit(book) {
@@ -12,19 +13,55 @@
   function onDelete(book) {
     event.dispatch("BookTable", "Collection", "deleteBook", book);
   }
-
-  onMount(() => {
-    jquery("#BookTable").DataTable();
-  });
 </script>
 
+<Datatable settings="{settings}" data="{data}">
+  <thead>
+    <th data-key="first_name">First Name</th>
+    <th data-key="last_name">Last Name</th>
+    <th data-key="email">Email</th>
+  </thead>
+  <tbody>
+    {#each $rows as row}
+      <tr>
+        <td>{row.first_name}</td>
+        <td>{row.last_name}</td>
+        <td>{row.email}</td>
+      </tr>
+    {/each}
+  </tbody>
+</Datatable>
+
 <!-- List Books -->
+<div class="card-body border-bottom py-3">
+  <div class="d-flex">
+    <div class="text-muted">
+      Show
+      <div class="mx-2 d-inline-block">
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          value="8"
+          size="3"
+          aria-label="Invoices count"
+        />
+      </div>
+    </div>
+    <div class="ms-auto text-muted">
+      Search:
+      <div class="ms-2 d-inline-block">
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          aria-label="Search invoice"
+        />
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="table-responsive">
-  <table
-    class="table card-table table-vcenter text-nowrap datatable no-footer"
-    id="BookTable"
-  >
+  <table class="table card-table table-vcenter text-nowrap datatable">
     <thead>
       <tr>
         <th>Título</th>
@@ -72,4 +109,8 @@
 </div>
 
 <style>
+  td {
+    text-align: center;
+    padding: 4px 0;
+  }
 </style>

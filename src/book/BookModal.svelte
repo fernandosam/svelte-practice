@@ -1,59 +1,60 @@
-<script>
+<script lang="ts">
+  import { event } from "../stores.js";
   import Form from "../common/Form.svelte";
   import Modal from "../common/Modal.svelte";
-  import { event } from "../stores.js";
+  import type { Message } from "../services/Message";
 
-  export let id;
-  export let title;
+  export let id: string;
+  export let title: string;
 
-  let data = newData();
+  let data: any = {};
 
-  // Local Actions
-  function newData() {
-    return {
-      title: "",
-      price: "",
-      description: "",
-    };
+  enum Actions {
+    CREATE_DATA = "createBook",
+    UPDATE_DATA = "updateBook",
   }
+
+  const dataModel = {
+    title: "",
+    price: "",
+    description: "",
+  };
 
   // Global Actions
   const actions = {
-    fillForm: (e) => {
-      data = e.object;
-    },
     newData: () => {
-      data = newData();
+      data = { ...dataModel };
     },
-    createData: () => {
-      event.dispatch("Collection", "createBook", data);
-      event.dispatch("Alert", "showSuccess", "Livro cadastrado com sucesso.");
-      data = newData();
+    fillForm: (message: Message) => {
+      data = message.content;
     },
-    updateData: () => {
-      event.dispatch("Collection", "updateBook", data);
-      event.dispatch("Alert", "showSuccess", "Livro alterado com sucesso.");
-      data = newData();
+    changeData: (message: Message) => {
+      const action = message.content;
+      event.dispatch(id, "Collection", String(action), data);
     },
   };
 
   event.listener(id, actions);
 </script>
 
-<Modal {id} {title}>
-  <Form {id}>
+<Modal id="{id}" title="{title}">
+  <Form id="{id}" create="{Actions.CREATE_DATA}" update="{Actions.UPDATE_DATA}">
     <div class="modal-body">
       <div class="mb-3">
         <div class="form-label required">Título</div>
-        <input type="text" class="form-control" bind:value={data.title} />
+        <input type="text" class="form-control" bind:value="{data.title}" />
       </div>
       <div class="mb-3">
         <div class="form-label required">Preço</div>
-        <input type="number" class="form-control" bind:value={data.price} />
+        <input type="number" class="form-control" bind:value="{data.price}" />
       </div>
       <div class="mb-3">
         <div class="form-label required">Descrição</div>
-        <input type="text" class="form-control" bind:value={data.description} />
+        <input
+          type="text"
+          class="form-control"
+          bind:value="{data.description}"
+        />
       </div>
     </div>
   </Form>

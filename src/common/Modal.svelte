@@ -4,8 +4,8 @@
 </script>
 
 <div
-  class="modal modal-blur fade"
   id="{id}-modal"
+  class="modal modal-blur fade"
   tabindex="-1"
   style="display: none;"
   aria-hidden="true"

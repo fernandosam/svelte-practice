@@ -1,64 +1,84 @@
 <script lang="ts">
+  // TODO: Rever a ação click()
   import { onMount } from "svelte";
+  import type { Message } from "../services/Message";
   import { form as formJS } from "../form.js";
   import { event } from "../stores.js";
 
   export let id: string;
-  let action = "createData";
+  export let create: string;
+  export let update: string;
+
+  enum Actions {
+    CREATE_DATA = "createDocument",
+    UPDATE_DATA = "updateDocument",
+  }
+
+  const messageFrom = id + "/Form";
+
+  let action = Actions.CREATE_DATA;
+  let modalEl: HTMLElement;
 
   // Local Actions
-  function onSubmit(e: any) {
+  function onSubmit(event: Event) {
+    // prevent the submit action
+    event.preventDefault();
     if (formJS.validate(id)) {
-      actions[action]();
-      formJS.focusFirstElement(id);
+      actions[action](event);
     }
-    e.preventDefault();
   }
 
   // Global Actions
   const actions = {
-    fillForm: (e: any) => {
-      event.dispatch(id, "fillForm", e.object);
-      formJS.cleanErrors(id);
-      action = "updateData";
+    fillForm: (message: Message) => {
+      formJS.click();
+      event.dispatch(messageFrom, id, "fillForm", message.content);
+      action = Actions.UPDATE_DATA;
     },
-    createData: () => {
-      event.dispatch(id, "createData");
+    createDocument: (e: Event) => {
+      event.dispatch(messageFrom, id, "changeData", create);
+      formJS.click();
     },
-    updateData: () => {
-      event.dispatch(id, "updateData");
-      action = "createData";
+    updateDocument: (e: Event) => {
+      event.dispatch(messageFrom, id, "changeData", update);
+      formJS.click();
     },
   };
 
-  event.listener(id + "/Form", actions);
+  event.listener(messageFrom, actions);
 
   onMount(() => {
-    var modalEl = document.getElementById(id + "-modal");
+    modalEl = document.getElementById(id + "-modal");
 
-    // Close Modal
-    modalEl.addEventListener("hidden.bs.modal", function (e) {
-      formJS.cleanErrors(id);
-      event.dispatch(id, "newData");
+    // Modal Events
+    modalEl.addEventListener("hidden.bs.modal", function (e: any) {
+      action = Actions.CREATE_DATA;
     });
 
-    formJS.focusFirstElement(id);
+    modalEl.addEventListener("show.bs.modal", function (e: any) {
+      formJS.cleanErrors(id);
+      event.dispatch(messageFrom, id, "newData");
+    });
+
+    modalEl.addEventListener("shown.bs.modal", function (e: any) {
+      formJS.focusFirstElement(id);
+    });
   });
 </script>
 
 <!-- Form -->
-<form {id} method="post" on:submit={onSubmit}>
+<form id="{id}" method="post" on:submit="{onSubmit}">
   <slot />
   <div class="modal-footer">
-    <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+    <a href="{'#'}" class="btn btn-link link-secondary" data-bs-dismiss="modal">
       Cancel
     </a>
-    {#if action == "updateData"}
+    {#if action == Actions.UPDATE_DATA}
       <input type="submit" class="btn btn-primary ms-auto" value="Alterar" />
-      <input type="hidden" name="action" value="updateData" />
+      <input type="hidden" name="action" value="{update}" />
     {:else}
       <input type="submit" class="btn btn-primary ms-auto" value="Incluir" />
-      <input type="hidden" name="action" value="createData" />
+      <input type="hidden" name="action" value="{create}" />
     {/if}
   </div>
 </form>

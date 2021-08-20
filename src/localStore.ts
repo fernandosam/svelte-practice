@@ -1,4 +1,3 @@
-// localStore.js
 import { writable } from "svelte/store";
 
 // receives the key of the local storage and an initial value

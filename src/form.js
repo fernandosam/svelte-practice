@@ -54,10 +54,7 @@ const module = () => {
 
       if (required && input.value === "") {
         invalids++;
-        showFieldError(
-          input,
-          "Por favor, informe o(a) " + label.innerHTML.toLowerCase()
-        );
+        showFieldError(input, "Por favor, informe o(a) " + label.innerHTML.toLowerCase());
       } else {
         hiddenFieldError(input);
       }
@@ -69,6 +66,9 @@ const module = () => {
   }
 
   return {
+    click: () => {
+      document.getElementById("data-add").click();
+    },
     focusFirstElement: (formId) => {
       var elements = document.getElementById(formId).elements;
 
@@ -80,8 +80,6 @@ const module = () => {
           break;
         }
       }
-
-      window.scrollTo(0, 0);
     },
     cleanErrors: (formId) => {
       var elements = document.getElementById(formId).elements;
