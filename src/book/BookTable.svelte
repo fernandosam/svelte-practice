@@ -1,6 +1,6 @@
 <script>
   import { books, event } from "../stores.js";
-  import { data } from "../data/test.js";
+  //import { data } from "../data/test.js";
   import { onMount } from "svelte";
   import jquery from "jquery";
 
@@ -14,7 +14,7 @@
   }
 
   onMount(() => {
-    jquery("#BookTable").DataTable();
+    //jquery("#BookTable").DataTable();
   });
 </script>
 

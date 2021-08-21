@@ -38,10 +38,14 @@ function serve() {
 
 export default {
   input: "src/main.js",
+  external: ["jquery"],
   output: {
     sourcemap: true,
     format: "iife",
     name: "app",
+    globals: {
+      jquery: "$",
+    },
     file: "public/build/bundle.js",
   },
   plugins: [
